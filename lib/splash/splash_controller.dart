@@ -20,7 +20,7 @@ class SplashController extends GetxController {
     final token = await _secureStorage.read('token');
 
     if (token != null && token.isNotEmpty) {
-      Get.offAllNamed(AppRoutes.homepage);
+      Get.offAllNamed(AppRoutes.home);
     } else {
       Get.offAll(() => const GetStartedScreen());
     }

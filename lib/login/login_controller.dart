@@ -31,7 +31,7 @@ class LoginController extends GetxController {
         await _secureStorage.save('token', token);
 
         Get.snackbar("تم", result['message']);
-        Get.offAllNamed(AppRoutes.homepage);
+        Get.offAllNamed(AppRoutes.home);
       } else {
         Get.snackbar("فشل", result['message']);
       }

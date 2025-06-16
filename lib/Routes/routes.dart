@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+import 'package:project2/homepage/home_page_binding.dart';
+import '../bottom_nav/bottom_nav.dart';
+import '../company_details/company_details_view.dart';
 import '../homepage/home_page_screen.dart';
 import '../login/login_binding.dart';
 import '../login/loginscreen.dart';
@@ -12,7 +15,9 @@ class AppRoutes {
   static const splash = '/splash';
   static const login = '/login';
   static const signup = '/signup';
-  static const homepage = '/homepage';
+  static const String main = '/';
+  static const String home = '/home';
+  static const String company_details = "/company_details";
 
   static final routes = [
     GetPage(
@@ -30,10 +35,9 @@ class AppRoutes {
       page: () => const SignUpScreen(),
       binding: SignUpBinding(),
     ),
-    GetPage(
-      name: homepage,
-      page: () => const HomePageScreen(),
-      binding: LogoutBinding(),
-    ),
+
+    GetPage(name: main, page: () => const BottomNav()),
+    GetPage(name: home, page: () => const HomePage(),binding: CompanyBindings()),
+    GetPage(name: company_details, page: () => const CompanyDetails()),
   ];
 }

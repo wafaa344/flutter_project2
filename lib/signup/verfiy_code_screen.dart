@@ -35,7 +35,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
     try {
       final success = await AuthService.verifyCode(code);
       if (success) {
-        Get.offAllNamed(AppRoutes.homepage);
+        Get.offAllNamed(AppRoutes.home);
 
       }
     } catch (e) {
