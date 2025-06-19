@@ -1,11 +1,15 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import 'PreviousProjectsPage.dart';
+
+import '../PreviousProjects/PreviousProjectsController.dart';
+import '../homepage/company_model.dart';
+import '../PreviousProjects/PreviousProjectsPage.dart';
 
 class CompanyDetails extends StatelessWidget {
-  const CompanyDetails({super.key});
-
+  final Company company;
+  const CompanyDetails({super.key, required this.company});
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -24,7 +28,7 @@ class CompanyDetails extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 image: const DecorationImage(
-                  image: AssetImage("assets/images/engineer.png"),
+                  image: AssetImage("assets/engineer.png"),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -53,7 +57,7 @@ class CompanyDetails extends StatelessWidget {
               right: 20,
               child: GestureDetector(
                 onTap: () {
-                  // هنا تذهب إلى الصفحة الرئيسية، عدّل المسار حسب حاجتك
+
                   Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
                 },
                 child: Container(
@@ -110,23 +114,27 @@ class CompanyDetails extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
 
-                          Text("اسم الشركة", style: Theme.of(context).textTheme.titleMedium),
-                          const SizedBox(height: 10),
-
                           Row(
-                            children: const [
-                              Icon(Icons.location_on_outlined, size: 18, color: Colors.orange),
-                              SizedBox(width: 8),
-                              Text("المدينة، الدولة", style: TextStyle(fontSize: 14)),
+                            children: [
+                              Text("اسم الشركة : ${company.name }", style: Theme.of(context).textTheme.titleMedium),
                             ],
                           ),
                           const SizedBox(height: 10),
 
                           Row(
-                            children: const [
+                            children:  [
+                              Icon(Icons.location_on_outlined, size: 18, color: Colors.orange),
+                              SizedBox(width: 8),
+                              Text(" موقع الشركة : ${company.location }", style: TextStyle(fontSize: 14)),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+
+                          Row(
+                            children:  [
                               Icon(Icons.phone_android, size: 18, color: Colors.orange),
                               SizedBox(width: 8),
-                              Text("1234567890", style: TextStyle(fontSize: 14)),
+                              Text("  رقم الهاتف للتواصل : ${company.phone }", style: TextStyle(fontSize: 14)),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -140,23 +148,23 @@ class CompanyDetails extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          const Text(
-                            "هذه نبذة قصيرة عن الشركة. تقدم خدمات إنشاء وإعادة تأهيل المنازل بأعلى جودة وأفضل الأسعار.. قم بالإطلاع على أعمالنا السابقة .",
+                           Text(
+                           company.about,
                             style: TextStyle(fontSize: 14),
                           ),
                           const SizedBox(height: 20),
                           Center(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _showProjectSelectionDialog(context);
+                            child:ElevatedButton(
+                              onPressed: () async {
+                                // تسجيل الكنترولر إن لم يكن مسجل مسبقًا
+                                if (!Get.isRegistered<PreviousProjectsController>()) {
+                                  Get.put(PreviousProjectsController());
+                                }
+
+                                // استدعاء التابع بعد تسجيل الكنترولر
+                                _showProjectSelectionDialog(context, company.id);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                              ),
+
                               child: const Text(
                                 " مشاريع سابقة ",
                                 style: TextStyle(fontSize: 16, color: Colors.black),
@@ -199,18 +207,19 @@ class CompanyDetails extends StatelessWidget {
                           ),
                           const SizedBox(height: 15),
 
-                          SizedBox(
-                            height: 120,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                _serviceCard("ترميم", Icons.home_repair_service),
-                                _serviceCard("تصميم", Icons.design_services),
-                                _serviceCard("بناء", Icons.construction),
-                                _serviceCard("استشارة", Icons.support_agent),
-                              ],
-                            ),
-                          ),
+                    SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: company.services.length,
+                        itemBuilder: (context, index) {
+                          final service = company.services[index];
+                          return _serviceCard(service.name, Icons.home_repair_service);
+                        },
+                      ),
+                    ),
+
+
                         ],
                       ),
 
@@ -254,51 +263,63 @@ class CompanyDetails extends StatelessWidget {
     );
   }
 
-  void _showProjectSelectionDialog(BuildContext context) {
+  void _showProjectSelectionDialog(BuildContext context, int companyId) async {
+    final controller = Get.find<PreviousProjectsController>();
+
+
+    final projects = await controller.fetchCompanyProjects(companyId);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: const Text("اختر مشروعًا"),
+          title: const Text("المشاريع السابقة"),
           content: SizedBox(
             width: double.maxFinite,
-            child: ListView(
+            child: projects.isEmpty
+                ? const Text("لا توجد مشاريع متاحة")
+                : ListView.builder(
               shrinkWrap: true,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.apartment, color: Colors.orange),
-                  title: const Text("مشروع إعادة تأهيل منزل"),
-                  onTap: () {
-                    Navigator.of(context).pop(); // إغلاق الـ dialog
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const PreviousProjectsPage(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.factory, color: Colors.orange),
-                  title: const Text("مشروع بناء فيلا"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const PreviousProjectsPage(),
-                      ),
-                    );
-                  },
-                ),
-                // أضف مشاريع إضافية حسب الحاجة
-              ],
+              itemCount: projects.length,
+              itemBuilder: (context, index) {
+                final project = projects[index];
+                return ListTile(
+                  leading: const Icon(Icons.work, color: Colors.orange),
+                  title: Text(project.projectName),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PreviousProjectsPage(project: project),
+                        ),
+                      );
+                    }
+
+                );
+              },
             ),
           ),
         );
       },
     );
+  }
+
+
+  IconData _getIconForService(String name) {
+    switch (name.trim()) {
+      case "ترميم":
+        return Icons.home_repair_service;
+      case "تصميم":
+        return Icons.design_services;
+      case "بناء":
+        return Icons.construction;
+      case "استشارة":
+        return Icons.support_agent;
+      default:
+        return Icons.miscellaneous_services; // أيقونة افتراضية
+    }
   }
 
 }

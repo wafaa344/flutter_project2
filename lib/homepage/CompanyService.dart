@@ -5,11 +5,20 @@ import 'company_model.dart';
 
 
 class CompanyService {
-  final Uri url = Uri.parse('${ServerConfiguration.domainNameServer}/api/companies');
+  var  url = Uri.parse('${ServerConfiguration.domainNameServer}/api/companies');
 
-  Future<CompanyResponse?> fetchCompanies() async {
+  Future<CompanyResponse?> fetchCompanies(String token) async {
     try {
-      final response = await http.get(url);
+      final response = await http.get(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print("Status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -23,4 +32,5 @@ class CompanyService {
       return null;
     }
   }
+
 }

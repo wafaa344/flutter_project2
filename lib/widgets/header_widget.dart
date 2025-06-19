@@ -57,7 +57,7 @@ class HeaderWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(width * 0.03),
                 child: Image.asset(
-                  'assets/images/engineer.png',
+                  'assets/engineer.png',
                   height: width * 0.15,
                   width: width * 0.15,
                   fit: BoxFit.cover,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 
 import '../basics/api_url.dart';
+import '../company_details/company_details_view.dart';
 import '../homepage/company_model.dart';
 
 
@@ -19,59 +22,64 @@ class CompanyCard extends StatelessWidget {
     final double iconSize = size.width * 0.05;
     final double spacing = size.width * 0.035;
 
-    return Card(
-      elevation: 6,
-      margin: EdgeInsets.symmetric(vertical: spacing),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(size.width * 0.04),
-        side: BorderSide(color: const Color(0xFFF77520), width: size.width * 0.004),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: radius,
-                backgroundColor: Colors.white,
-                backgroundImage: NetworkImage('${ServerConfiguration.domainNameServer}/${companyModel.logo}'),
-              ),
-
-              SizedBox(width: spacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      companyModel.name,
-                      style: TextStyle(
-                        fontSize: fontSizeTitle,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: spacing * 0.5),
-                    Text(
-                      companyModel.location,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: fontSizeSubtitle,
-                      ),
-                    ),
-                    SizedBox(height: spacing),
-                    Row(
-                      children: List.generate(5, (index) {
-                        return Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: iconSize,
-                        );
-                      }),
-                    ),
-                  ],
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => CompanyDetails(company: companyModel));
+      },
+      child: Card(
+        elevation: 6,
+        margin: EdgeInsets.symmetric(vertical: spacing),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(size.width * 0.04),
+          side: BorderSide(color: const Color(0xFFF77520), width: size.width * 0.004),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: radius,
+                  backgroundColor: Colors.white,
+                  backgroundImage: NetworkImage('${ServerConfiguration.domainNameServer}/${companyModel.logo}'),
                 ),
-              ),
-            ],
+
+                SizedBox(width: spacing),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        companyModel.name,
+                        style: TextStyle(
+                          fontSize: fontSizeTitle,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: spacing * 0.5),
+                      Text(
+                        companyModel.location,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: fontSizeSubtitle,
+                        ),
+                      ),
+                      SizedBox(height: spacing),
+                      Row(
+                        children: List.generate(5, (index) {
+                          return Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: iconSize,
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

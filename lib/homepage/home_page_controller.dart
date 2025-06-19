@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
 
+import '../native_service/secure_storage.dart';
 import 'CompanyService.dart';
 import 'company_model.dart';
 
 
 class CompanyController extends GetxController {
   var companies = <Company>[].obs;
-  var isLoading = false.obs;
-
+  late SecureStorage storage = SecureStorage();
+  var isLoading = true.obs;
+  String? token;
   final CompanyService _service = CompanyService();
 
   @override
@@ -16,17 +18,21 @@ class CompanyController extends GetxController {
     fetchCompanies();
   }
 
-  void fetchCompanies() async {
-    isLoading.value = true;
+  Future<void> fetchCompanies() async {
+    isLoading(true);
+    token = await storage.read('token');
 
-    final response = await _service.fetchCompanies();
+    if (token != null) {
+      final response = await _service.fetchCompanies(token!);
 
-    if (response != null && response.success) {
-      companies.assignAll(response.data);
-    } else {
-      print("فشل في تحميل الشركات");
+      if (response != null && response.success) {
+        companies.assignAll(response.data);
+      } else {
+        print("فشل في تحميل الشركات");
+      }
     }
 
-    isLoading.value = false;
+    isLoading(false);
   }
+
 }

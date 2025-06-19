@@ -38,6 +38,6 @@ class AppRoutes {
 
     GetPage(name: main, page: () => const BottomNav()),
     GetPage(name: home, page: () => const HomePage(),binding: CompanyBindings()),
-    GetPage(name: company_details, page: () => const CompanyDetails()),
+    //GetPage(name: company_details, page: () => const CompanyDetails()),
   ];
 }

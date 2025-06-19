@@ -1,8 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import '../PreviousProjects/PreviousProjectsModel.dart';
 
 class PreviousProjectsPage extends StatelessWidget {
-  const PreviousProjectsPage({super.key});
+  final PreviousProjectsModel project;
+
+  const PreviousProjectsPage({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +13,7 @@ class PreviousProjectsPage extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('المشاريع السابقة'),
+          title: const Text('تفاصيل المشروع'),
           backgroundColor: Colors.orange,
         ),
         body: ListView(
@@ -18,20 +21,13 @@ class PreviousProjectsPage extends StatelessWidget {
           children: [
             _buildProjectCard(
               context,
-              title: 'مشروع إعادة تأهيل منزل',
-              startDate: 'يناير 2024',
-              endDate: 'مارس 2024',
-              description:
-              'تمت إعادة تأهيل المنزل بالكامل مع إضافة تصميم داخلي حديث وحديقة خلفية.',
-              cost: '150,000 ر.س',
-              beforeImages: [
-                'assets/images/Dec3.jpg',
-                'assets/images/Dec3.jpg',
-              ],
-              afterImages: [
-                'assets/images/Dec1.jpg',
-                'assets/images/Dec2.jpg',
-              ],
+              title: project.projectName,
+              startDate: project.startDate,
+              endDate: project.endDate,
+              description: project.description,
+              cost: "${project.finalCost} ر.س",
+              beforeImages: project.projectImages.map((img) => img.beforeImage).toList(),
+              afterImages: project.projectImages.map((img) => img.afterImage).toList(),
             ),
           ],
         ),
@@ -77,7 +73,6 @@ class PreviousProjectsPage extends StatelessWidget {
             const SizedBox(height: 10),
             Text(description, style: const TextStyle(fontSize: 14)),
             const SizedBox(height: 20),
-
             _buildImageSlider('قبل الإعمار', beforeImages),
             const SizedBox(height: 20),
             _buildImageSlider('بعد الإعمار', afterImages),
@@ -93,8 +88,8 @@ class PreviousProjectsPage extends StatelessWidget {
       children: [
         Text(
           title,
-          style:
-          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange),
+          style: const TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange),
         ),
         const SizedBox(height: 10),
         CarouselSlider(
@@ -102,16 +97,21 @@ class PreviousProjectsPage extends StatelessWidget {
             height: 200,
             enlargeCenterPage: true,
             enableInfiniteScroll: false,
-            autoPlay: false, // <== هذا هو المفتاح
+            autoPlay: false,
             viewportFraction: 0.8,
           ),
-          items: images.map((imagePath) {
+          items: images.map((imageUrl) {
             return ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Image.asset(
-                imagePath,
+              child: Image.network(
+                imageUrl,
                 fit: BoxFit.cover,
                 width: double.infinity,
+                errorBuilder: (context, error, stackTrace) => Image.asset(
+                  'assets/Dec1.jpg',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               ),
             );
           }).toList(),
@@ -119,4 +119,5 @@ class PreviousProjectsPage extends StatelessWidget {
       ],
     );
   }
+
 }

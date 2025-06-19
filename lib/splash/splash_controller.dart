@@ -7,7 +7,7 @@ import '../native_service/secure_storage.dart';
 
 class SplashController extends GetxController {
   final SecureStorage _secureStorage = SecureStorage();
-
+  final storage = SecureStorage();
   @override
   void onInit() {
     super.onInit();
