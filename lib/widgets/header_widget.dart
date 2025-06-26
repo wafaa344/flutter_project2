@@ -64,14 +64,15 @@ class HeaderWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(width: width * 0.02),
-              IconButton(
-                icon: const Icon(Icons.settings, color: Colors.white),
-                iconSize: width * 0.07,
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('الإعدادات')),
-                  );
-                },
+              // زر الإعدادات داخل Builder
+              Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.settings, color: Colors.white),
+                  iconSize: width * 0.07,
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
               ),
             ],
           ),
@@ -80,4 +81,5 @@ class HeaderWidget extends StatelessWidget {
     );
   }
 }
+
 

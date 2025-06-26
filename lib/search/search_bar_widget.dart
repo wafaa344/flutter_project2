@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../search/search_controller.dart';
 
 class SearchBarWidget extends StatelessWidget {
   const SearchBarWidget({super.key, required this.width, required this.height});
@@ -8,6 +10,8 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<MySearchController>();
+
     return Row(
       children: [
         Expanded(
@@ -24,14 +28,19 @@ class SearchBarWidget extends StatelessWidget {
               ],
             ),
             padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-            child: const TextField(
-              textDirection: TextDirection.rtl,
-              decoration: InputDecoration(
-                hintText: 'ابحث هنا...',
-                border: InputBorder.none,
-                icon: Icon(Icons.search),
-              ),
-            ),
+            child: Obx(() {
+              return TextField(
+                textDirection: TextDirection.rtl,
+                onChanged: controller.onQueryChanged,
+                decoration: InputDecoration(
+                  hintText: 'ابحث هنا...',
+                  border: InputBorder.none,
+                  icon: controller.isLoading.value
+                      ? const CircularProgressIndicator()
+                      : const Icon(Icons.search),
+                ),
+              );
+            }),
           ),
         ),
         SizedBox(width: width * 0.03),

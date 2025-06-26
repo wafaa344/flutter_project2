@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:project2/signup/verify_code_service.dart';
 import '../Routes/routes.dart';
 import '../basics/app_colors.dart';

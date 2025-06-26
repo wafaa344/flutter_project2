@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:project2/homepage/home_page_binding.dart';
+import 'package:project2/search/search_binding.dart';
 import '../bottom_nav/bottom_nav.dart';
 import '../company_details/company_details_view.dart';
 import '../homepage/home_page_screen.dart';
@@ -35,9 +36,17 @@ class AppRoutes {
       page: () => const SignUpScreen(),
       binding: SignUpBinding(),
     ),
+    GetPage(
+      name: home,
+      page: () => const HomePage(),
+      binding: BindingsBuilder(() {
+        SearchBindings().dependencies();
+        LogoutBinding().dependencies();
+      }),
+    ),
 
     GetPage(name: main, page: () => const BottomNav()),
-    GetPage(name: home, page: () => const HomePage(),binding: CompanyBindings()),
-    //GetPage(name: company_details, page: () => const CompanyDetails()),
+
+
   ];
 }

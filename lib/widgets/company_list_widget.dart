@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../homepage/home_page_controller.dart';
+import '../search/search_controller.dart';
 import 'company_card.dart';
 
 class CompanyListWidget extends StatelessWidget {
@@ -9,13 +8,12 @@ class CompanyListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CompanyController controller = Get.find();
-
+    final MySearchController controller = Get.find();
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
     return Obx(() {
-      if (controller.isLoading.value) {
+      if (controller.isLoading.value && controller.companies.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
 
@@ -39,12 +37,28 @@ class CompanyListWidget extends StatelessWidget {
             ),
             SizedBox(height: height * 0.02),
             Expanded(
-              child: ListView.builder(
-                itemCount: controller.companies.length,
-                itemBuilder: (context, index) {
-                  final company = controller.companies[index];
-                  return CompanyCard(companyModel: company);
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (scrollInfo) {
+                  if (!controller.isLoading.value &&
+                      scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 100) {
+                    controller.loadNextPage();
+                  }
+                  return false;
                 },
+                child: ListView.builder(
+                  itemCount: controller.companies.length + (controller.isLoading.value ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index < controller.companies.length) {
+                      final company = controller.companies[index];
+                      return CompanyCard(companyModel: company);
+                    } else {
+                      return const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ],

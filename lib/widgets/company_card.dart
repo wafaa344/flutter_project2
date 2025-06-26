@@ -42,7 +42,7 @@ class CompanyCard extends StatelessWidget {
                 CircleAvatar(
                   radius: radius,
                   backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage('${ServerConfiguration.domainNameServer}/${companyModel.logo}'),
+                  backgroundImage: NetworkImage('${ServerConfiguration.domainNameServer}/storage/companies-logo/${companyModel.logo}'),
                 ),
 
                 SizedBox(width: spacing),

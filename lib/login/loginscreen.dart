@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Align(
                     alignment: Alignment.centerRight,
                     child:    Row(
-                      children: const [
+                      children:  [
                         Icon(Icons.email, size: 18, color: AppColors.primaryColor),
                         SizedBox(width: 6),
                         Text(
