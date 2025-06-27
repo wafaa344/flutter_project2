@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project2/survey/survey_page.dart';
 
 
 import '../PreviousProjects/PreviousProjectsController.dart';
 import '../homepage/company_model.dart';
 import '../PreviousProjects/PreviousProjectsPage.dart';
+import '../survey/survey_controller.dart';
 
 class CompanyDetails extends StatelessWidget {
   final Company company;
@@ -183,7 +185,9 @@ class CompanyDetails extends StatelessWidget {
 
                           Center(
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _showServiceSelectionDialog(context, company.services);
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.orange,
                                 shape: RoundedRectangleBorder(
@@ -307,19 +311,72 @@ class CompanyDetails extends StatelessWidget {
   }
 
 
-  IconData _getIconForService(String name) {
-    switch (name.trim()) {
-      case "ترميم":
-        return Icons.home_repair_service;
-      case "تصميم":
-        return Icons.design_services;
-      case "بناء":
-        return Icons.construction;
-      case "استشارة":
-        return Icons.support_agent;
-      default:
-        return Icons.miscellaneous_services; // أيقونة افتراضية
-    }
+  void _showServiceSelectionDialog(BuildContext context, List<Service> services) {
+    List<Service> selectedServices = [];
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              title: const Text("اختر الخدمات التي تحتاجها"),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: services.length,
+                  itemBuilder: (context, index) {
+                    final service = services[index];
+                    final isSelected = selectedServices.contains(service);
+
+                    return CheckboxListTile(
+                      value: isSelected,
+                      title: Text(service.name),
+                      onChanged: (bool? selected) {
+                        setState(() {
+                          if (selected == true) {
+                            selectedServices.add(service);
+                          } else {
+                            selectedServices.remove(service);
+                          }
+                        });
+                      },
+                      activeColor: Colors.orange,
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("إلغاء"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                  onPressed: () {
+                    if (selectedServices.isNotEmpty) {
+                      Navigator.pop(context);
+                      final serviceIds = selectedServices.map((e) => e.id).toList();
+
+                      Get.toNamed('/survey', arguments: serviceIds);
+                    } else {
+                      Get.snackbar("تنبيه", "يرجى اختيار خدمة واحدة على الأقل",
+                          backgroundColor: Colors.orange.shade100);
+                    }
+                  }
+
+                  ,
+            child: const Text("التالي", style: TextStyle(color: Colors.black)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
+
 
 }
