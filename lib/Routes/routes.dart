@@ -3,6 +3,8 @@ import '../homepage/home_page_screen.dart';
 import '../login/login_binding.dart';
 import '../login/loginscreen.dart';
 import '../logout/logout_binding.dart';
+import '../profile/profile_binding.dart';
+import '../profile/profile_page.dart';
 import '../signup/signup_binding.dart';
 import '../signup/signup_screen.dart';
 import '../splash/splash_binding.dart';
@@ -13,6 +15,7 @@ class AppRoutes {
   static const login = '/login';
   static const signup = '/signup';
   static const homepage = '/homepage';
+  static const profilepage = '/profilepage';
 
   static final routes = [
     GetPage(
@@ -34,6 +37,11 @@ class AppRoutes {
       name: homepage,
       page: () => const HomePageScreen(),
       binding: LogoutBinding(),
+    ),
+    GetPage(
+      name: profilepage,
+      page: () => ProfileScreen(),
+      binding: ProfileBinding(),
     ),
   ];
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../Routes/routes.dart';
 import '../basics/app_colors.dart';
 import '../logout/logout_controller.dart';
+import '../profile/profile_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -32,7 +34,8 @@ class CustomDrawer extends StatelessWidget {
               leading: const Icon(Icons.person),
               title: const Text('الملف الشخصي'),
               onTap: () {
-
+               // Get.to(ProfileScreen());
+               Get.toNamed(AppRoutes.profilepage);
               },
             ),
             ListTile(
