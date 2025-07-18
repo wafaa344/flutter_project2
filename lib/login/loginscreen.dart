@@ -3,6 +3,7 @@ import '../basics/app_colors.dart';
 import 'package:get/get.dart';
 
 import '../homepage/home_page_screen.dart';
+import 'forget_password_screen.dart';
 import 'login_controller.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -141,8 +142,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   GestureDetector(
                     onTap: () {
-
+                      showDialog(
+                        context: context,
+                        builder: (context) => ForgetPasswordDialog(),
+                      );
                     },
+
                     child: const Align(
                       alignment: Alignment.center,
                       child: Text(
