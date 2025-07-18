@@ -1,4 +1,4 @@
 
 class ServerConfiguration {
-  static const domainNameServer = 'http://127.0.0.1:8000';
+  static const domainNameServer = 'http://159.198.75.161:8083';
 }

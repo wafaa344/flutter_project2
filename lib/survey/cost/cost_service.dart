@@ -1,11 +1,12 @@
 // cost_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../basics/api_url.dart';
 import 'cost_model.dart';
 
 class CostService {
   Future<CostResponse> calculateCost(String token,CostRequest request) async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/survey/calculate-cost');
+    final url = Uri.parse('${ServerConfiguration.domainNameServer}/api/survey/calculate-cost');
     final response = await http.post(
       url,
       headers: {

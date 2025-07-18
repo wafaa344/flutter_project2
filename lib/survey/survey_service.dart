@@ -1,11 +1,12 @@
 // survey_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project2/basics/api_url.dart';
 import 'survey_model.dart';
 
 class SurveyService {
   Future<List<ServiceModel>> fetchSurveyQuestions(String token,List<int> serviceIds) async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/services/questions');
+    final url = Uri.parse('${ServerConfiguration.domainNameServer}/api/services/questions');
     final response = await http.post(
       url,
       headers: {

@@ -13,14 +13,26 @@ class CompanyListWidget extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
 
     return Obx(() {
+      // عرض مؤشر تحميل عندما لا توجد بيانات بعد
       if (controller.isLoading.value && controller.companies.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (controller.companies.isEmpty) {
+      // ✅ الشرط الجديد: عرض رسالة إذا البحث مفعل ولا توجد نتائج
+      if (!controller.isLoading.value &&
+          controller.query.value.isNotEmpty &&
+          controller.companies.isEmpty) {
+        return const Center(child: Text('لا توجد نتائج مطابقة للبحث'));
+      }
+
+      // الحالة الأصلية: لا يوجد بحث مفعل، ولا توجد شركات
+      if (!controller.isLoading.value &&
+          controller.query.value.isEmpty &&
+          controller.companies.isEmpty) {
         return const Center(child: Text('لا توجد شركات متاحة حالياً'));
       }
 
+      // عرض النتائج
       return Expanded(
         child: Column(
           children: [

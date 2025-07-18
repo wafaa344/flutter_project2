@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import '../homepage/company_model.dart';
 import '../native_service/secure_storage.dart';
 import 'search_service.dart';
-import '../homepage/CompanyService.dart'; // لإحضار جميع الشركات
+import '../homepage/CompanyService.dart';
 
 class MySearchController extends GetxController {
   final SearchService searchService;
@@ -23,17 +23,22 @@ class MySearchController extends GetxController {
   void onInit() {
     super.onInit();
     fetchAllCompanies();
+
+    // ✅ استخدام debounce لتأخير البحث حتى يتوقف المستخدم عن الكتابة
+    debounce(query, (_) {
+      if (query.value.trim().isEmpty) {
+        fetchAllCompanies();
+      } else {
+        refreshSearch();
+      }
+    }, time: const Duration(milliseconds: 500));
   }
 
   void onQueryChanged(String q) {
-    query.value = q;
-    if (q.trim().isEmpty) {
-      fetchAllCompanies();
-    } else {
-      refreshSearch();
-    }
+    query.value = q.trim();
   }
 
+  /// ✅ تحميل جميع الشركات بدون فلترة
   Future<void> fetchAllCompanies() async {
     isLoading(true);
     token = await storage.read('token');
@@ -44,40 +49,56 @@ class MySearchController extends GetxController {
         companies.assignAll(result.data);
         lastPage.value = 1;
         currentPage.value = 1;
+      } else {
+        companies.clear();
       }
     }
 
     isLoading(false);
   }
 
+  /// ✅ بدء بحث جديد
   Future<void> refreshSearch() async {
+    if (isLoading.value) return; // منع التكرار
     currentPage.value = 1;
     companies.clear();
     await _fetchPage();
   }
 
+  /// ✅ تحميل الصفحة التالية
   Future<void> loadNextPage() async {
     if (query.isEmpty) return;
-    if (currentPage.value >= lastPage.value || isLoading.value) return;
+    if (isLoading.value) return;
+    if (currentPage.value >= lastPage.value) return;
 
     currentPage.value++;
     await _fetchPage();
   }
 
+  /// ✅ جلب بيانات صفحة معينة
   Future<void> _fetchPage() async {
     token = await storage.read('token');
     if (token != null) {
       try {
         isLoading.value = true;
+
         final response = await searchService.search(
           token: token!,
           query: query.value,
           page: currentPage.value,
         );
-        lastPage.value = response.lastPage;
-        companies.addAll(response.data);
-      } catch (e) {
 
+        lastPage.value = response.lastPage;
+
+        // ✅ منع تكرار نفس الشركات
+        final newCompanies = response.data;
+        for (var company in newCompanies) {
+          if (!companies.any((c) => c.id == company.id)) {
+            companies.add(company);
+          }
+        }
+      } catch (e) {
+        print('Search error: $e');
       } finally {
         isLoading.value = false;
       }
